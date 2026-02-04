@@ -41,18 +41,6 @@ The AavegotchiDAO documentation states:
 
 ### Rationale
 
-**Current State:**
-- Multi-Sig signers selected through informal processes
-- Limited transparency in signer accountability
-- No on-chain tracking of signer performance
-- Community concerns about centralization
-
-**Desired State:**
-- Transparent, democratic signer selection
-- On-chain accountability mechanisms
-- Performance tracking and incentive alignment
-- Progressive trust-building toward diamondCut() transfer
-
 **Why Multi-Sig Signers Are Critical:**
 
 The Multi-Sig signers are not merely fund managers. They represent:
