@@ -1,0 +1,21 @@
+{
+  "name": "dao-governance",
+  "version": "1.0.0",
+  "description": "Diamond Standard DAO Governance and Signer Election System",
+  "scripts": {
+    "compile": "npx hardhat compile",
+    "test": "npx hardhat test",
+    "test:gas": "REPORT_GAS=true npx hardhat test",
+    "deploy:local": "npx hardhat run scripts/deploy.js --network localhost",
+    "deploy:sepolia": "npx hardhat run scripts/deploy-standalone.js --network sepolia",
+    "deploy:standalone:local": "npx hardhat run scripts/deploy-standalone.js --network localhost",
+    "deploy:standalone:sepolia": "npx hardhat run scripts/deploy-standalone.js --network sepolia",
+    "deploy:diamond:sepolia": "npx hardhat run scripts/deploy-diamond.js --network sepolia",
+    "node": "npx hardhat node"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.0"
+  },
+  "license": "MIT"
+}
