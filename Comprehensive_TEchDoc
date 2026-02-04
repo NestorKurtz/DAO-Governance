@@ -1,0 +1,725 @@
+# Signal Proposal: Multi-Sig Signer Nomination & Election
+## Comprehensive Technical Specification
+
+---
+
+## Executive Summary
+
+This proposal introduces a three-phase, transparent process for nominating and electing Multi-Sig wallet signers, incorporating both traditional governance mechanisms and experimental on-chain components. The goal is to accelerate AavegotchiDAO's measured transition to full on-chain governance while maintaining security and community involvement.
+
+---
+
+## Table of Contents
+
+1. [Context & Mission](#context--mission)
+2. [Voting Mechanisms](#voting-mechanisms)
+3. [Phase I: Nomination & Role Definition](#phase-i-nomination--role-definition)
+4. [Phase II: Signal Proposal](#phase-ii-signal-proposal)
+5. [Phase III: Core Proposal](#phase-iii-core-proposal)
+6. [Technical Implementation](#technical-implementation)
+7. [Risk Analysis](#risk-analysis)
+8. [Success Metrics](#success-metrics)
+
+---
+
+## Context & Mission
+
+### Background Resources
+
+**Essential Reading:**
+- [DAO Governance Oligarchy Discussion](https://dao.aavegotchi.com/t/dao-governance-oligarchy/927/16) - Community concerns about centralization
+- [Aave Governance V2 Implementation](https://github.com/aave/governance-v2) - Technical precedent
+- [Aavegotchi Contract Governance](https://docs.aavegotchi.com/developers/aavegotchi-contracts/extending-aavegotchi-contracts/governance) - Current system
+
+### Mission Statement
+
+The AavegotchiDAO documentation states:
+
+> "It is our full intention to eventually transfer access to the diamondCut() function to the AavegotchiDAO. But this is a process of gradual decentralization. The DAO must be ready for this responsibility, or else the protocol will be at risk."
+
+**This proposal treats this statement as the DAO's primary mission.** Every governance action should be evaluated against its contribution to achieving safe, complete decentralization.
+
+### Rationale
+
+**Current State:**
+- Multi-Sig signers selected through informal processes
+- Limited transparency in signer accountability
+- No on-chain tracking of signer performance
+- Community concerns about centralization
+
+**Desired State:**
+- Transparent, democratic signer selection
+- On-chain accountability mechanisms
+- Performance tracking and incentive alignment
+- Progressive trust-building toward diamondCut() transfer
+
+**Why Multi-Sig Signers Are Critical:**
+
+The Multi-Sig signers are not merely fund managers. They represent:
+1. **Current Role:** Guardians of treasury funds and protocol upgrades
+2. **Future Role:** Final human checkpoint before irreversible protocol changes
+3. **Security Node:** Last line of defense against malicious proposals
+4. **Trust Bridge:** Community representatives in high-stakes decisions
+
+**This makes signer selection a security-critical governance action** warranting the 20% quorum threshold, even though no protocol code is directly modified.
+
+---
+
+## Voting Mechanisms
+
+### Off-Chain Vote (Primary Decision)
+
+**Platform:** Snapshot  
+**Type:** Weighted voting  
+**Quorum:** 20%  
+**Duration:** 7 days (standard)
+
+**Rationale for 20% Quorum:**
+- Security-critical decision
+- Affects protocol trust and safety
+- Establishes precedent for governance processes
+- High community engagement required
+
+**Voting Weight:** Based on GHST token holdings and vesting positions
+
+### On-Chain Vote (Experimental)
+
+**Platform:** Custom smart contract  
+**Type:** Weighted voting  
+**Quorum:** 0% (experimental, non-binding)  
+**Duration:** Parallel to Snapshot vote
+
+**Purpose:**
+- Test on-chain governance infrastructure
+- Gather data on gas costs and participation
+- Build confidence in future on-chain systems
+- Educational for community
+
+**Important:** The on-chain vote is advisory only. The Snapshot result is binding.
+
+---
+
+## Phase I: Nomination & Role Definition
+
+**Total Duration:** 144 hours (6 days)  
+**Structure:** Two sequential 72-hour periods
+
+### Part A: Candidate Nomination (72 hours)
+
+**Objective:** Create a transparent pool of willing and qualified candidates
+
+#### Nomination Process
+
+**Who Can Nominate:**
+- Any wallet with voting power in the DAO
+- Minimum: 100 GHST (prevents spam)
+
+**Who Can Be Nominated:**
+- Any community member
+- Self-nomination encouraged
+- No minimum GHST holding for candidates (trust-based)
+
+**How to Nominate:**
+
+**Option 1 - On-Chain (Preferred):**
+```
+1. Connect wallet to governance portal
+2. Navigate to "Multi-Sig Nomination"
+3. Enter candidate wallet address
+4. Add 280-character statement
+5. Submit transaction (minimal gas)
+```
+
+**Option 2 - Discord (Temporary):**
+```
+1. Post in #multi-sig-nominations channel
+2. Format: @candidate wallet_address "statement"
+3. React with 👍 to signal nomination
+4. Will be manually added to on-chain record
+```
+
+**Nomination Requirements:**
+
+Candidates must provide:
+1. **Wallet Address:** For on-chain tracking
+2. **Contact Info:** Discord/Telegram for availability signaling
+3. **Statement (280 chars):** Why they want to serve
+4. **Hardware Wallet Commitment:** Own or will acquire unused device
+5. **Availability Commitment:** 
+   - Response within 24h for urgent signatures
+   - Response within 48h for standard signatures
+   - Proactive signaling of unavailability (vacation, etc.)
+
+**Transparency:**
+- All nominations publicly visible on-chain
+- Nomination timestamps recorded
+- Can nominate multiple candidates
+- Can withdraw nomination if candidate declines
+
+#### Expected Outcomes
+
+- **Target:** 8-15 candidates
+- **Minimum:** 5 candidates (proposal fails if not reached)
+- **Maximum:** No limit (community self-regulates)
+
+---
+
+### Part B: Role Definition & Assessment (72 hours)
+
+**Objective:** Community-driven definition of role requirements and candidate evaluation
+
+This phase introduces an experimental on-chain assessment system while maintaining established governance standards.
+
+#### Component 1: Traditional Requirements (Reaffirmed)
+
+These requirements remain mandatory from previous signer selections:
+
+**1. Community Standing:**
+- Active DAO participant for minimum 6 months
+- No history of governance attacks or malicious proposals
+- Positive reputation in Discord/Forum
+- Verification: Snapshot vote history + Discord role
+
+**2. Technical Requirements:**
+- Own unused hardware wallet (Ledger/Trezor) OR
+- Commitment to acquire within 7 days if elected
+- Basic understanding of Multi-Sig operations
+- Able to verify transaction details before signing
+
+**3. Commitment Requirements:**
+- Available for urgent signatures (24h response)
+- Available for standard signatures (48h response)
+- Proactive communication of unavailability
+- Minimum 1-year commitment (or as voted)
+
+#### Component 2: New Accountability Mechanisms
+
+**Mandatory Availability Signaling:**
+
+Signers must maintain an on-chain availability status:
+- ✅ Available (default)
+- ⏸️ Limited Availability (slow response expected)
+- ❌ Unavailable (planned absence)
+
+**How It Works:**
+1. Signer updates status via simple transaction
+2. Status visible on public dashboard
+3. Alerts triggered if status unchanged for 30 days
+4. Automatic alerts to remaining signers if any signer marks unavailable
+
+**Penalties for Non-Signaling:**
+
+Vote on ONE penalty mechanism from these options:
+
+**Option A: Performance Badge System**
+- Earn badges for consistent availability/signing
+- Lose badge tier for missed signals
+- Badges affect future signer elections (reputation)
+
+**Option B: Reputation Coin Adjustment**
+- Hypothetical "REP" token allocation
+- Increase for good performance
+- Decrease for missed signals
+- Could affect future governance weight
+
+**Option C: Reliability Ranking**
+- Simple on-chain score (0-100)
+- Calculated from: response time, availability updates, successful signatures
+- Public dashboard showing all signers
+- No direct penalty, but transparent performance tracking
+
+**Option D: Competitive Bounty Model**
+- Fixed bounty per successful signature (e.g., $50 USDC)
+- Distributed to signers who complete signature
+- Missed signatures = missed bounty (opportunity cost)
+- Incentivizes fast response
+
+**Option E: Hybrid Approach**
+- Combine ranking (transparency) + bounty (incentive)
+- Community votes on specific parameters
+
+**Voting Method:** Ranked choice (1st, 2nd, 3rd preference)
+
+#### Component 3: Community Assessment (EXPERIMENTAL)
+
+**This is the most innovative part of the proposal.**
+
+**Objective:** Gather anonymous, quantitative community input on candidate suitability
+
+**How It Works:**
+
+Each voter receives **100 ValuePoints** to distribute among candidates across 4 traits:
+
+**The 4 Traits:**
+
+1. **Technical Competence (0-100 points)**
+   - Understanding of protocol mechanics
+   - Ability to verify transaction safety
+   - Technical problem-solving skills
+
+2. **Reliability & Commitment (0-100 points)**
+   - Track record of follow-through
+   - Consistent community engagement
+   - Perceived dedication to role
+
+3. **Communication & Transparency (0-100 points)**
+   - Clear communication style
+   - Responsive to questions
+   - Proactive information sharing
+
+4. **Alignment with DAO Values (0-100 points)**
+   - Long-term thinking vs. short-term gains
+   - Community-first mindset
+   - Governance participation history
+
+**Allocation Rules:**
+- Total must equal 100 points per candidate assessed
+- Minimum allocation: 5 points per trait (prevents spam)
+- Can assess multiple candidates (100 points per candidate)
+- Cannot assess yourself (if you're a candidate)
+
+**Optional Text Feedback:**
+- 69-character limit (Discord-style brevity)
+- Anonymous (wallet address not linked)
+- Displayed alongside quantitative scores
+
+**Example Assessment:**
+
+```
+Candidate: Alice (0x1234...5678)
+
+Technical Competence:        ⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜ 40 pts
+Reliability & Commitment:    ⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜ 25 pts
+Communication & Transparency: ⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜ 15 pts
+DAO Values Alignment:        ⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛ 20 pts
+
+Feedback: "Strong technical skills, but could engage more in forums"
+```
+
+**Aggregation:**
+- Median score per trait (resistant to outliers)
+- Total score = sum of median trait scores
+- Displayed on public leaderboard
+- Used as advisory input (not binding requirement)
+
+**Privacy:**
+- Individual assessments are private
+- Only aggregated results published
+- Prevents targeted retaliation
+- Encourages honest feedback
+
+#### Component 4: Compensation Framework
+
+**Current Precedent:** Multi-Sig signers historically received USDC compensation
+
+**Voter Input Required:**
+
+**1. Term Length:**
+
+Vote on preferred signer term:
+- [ ] 6 months (high rotation, fresh perspectives)
+- [ ] 1 year (current standard, balanced)
+- [ ] 18 months (more stability, less elections)
+- [ ] 2 years (maximum stability)
+- [ ] Other: _________ (write-in)
+
+**Voting Method:** Ranked choice
+
+**2. Compensation Amount:**
+
+Select up to 3 preferred values between $200 - $3,000 USDC:
+
+```
+$200  $300  $400  $500  $600  $700  $800  $900
+$1,000 $1,100 $1,200 ... $2,900 $3,000
+```
+
+**Selection is per term (not monthly)**
+
+**Example Voter Selection:**
+- 1st choice: $1,500
+- 2nd choice: $1,200  
+- 3rd choice: $1,800
+
+**Calculation:** Median of all voters' median choices becomes the compensation
+
+**Rationale for Range:**
+- $200 minimum (symbolic, covers gas costs)
+- $3,000 maximum (meaningful but not excessive)
+- Community decides appropriate value
+- Adjustable in future elections
+
+**3. Payment Method:**
+
+Vote on structure:
+- [ ] Lump sum at end of term
+- [ ] Quarterly payments
+- [ ] Performance-based (e.g., per signature)
+- [ ] Hybrid (base + performance bonus)
+
+---
+
+## Phase II: Signal Proposal
+
+**Duration:** TBD (voted in Phase I)  
+**Platform:** Snapshot  
+**Quorum:** 20%
+
+### Timeline Options (Voted in Phase I.B)
+
+**Option A: Simultaneous Start**
+- Signal proposal starts with nominations
+- Runs parallel to entire Phase I (144h)
+- Fastest path to decision
+- Risk: Less informed voting early
+
+**Option B: Post-Nomination Start**
+- Signal starts after nominations close
+- Voters see candidate pool first
+- 72h for candidate review + 7d voting = 9-10 days total
+
+**Option C: Post-Role-Definition Start**
+- Signal starts after entire Phase I completes
+- Most informed voting
+- 144h Phase I + 7d Signal = 13-14 days total
+- Recommended option
+
+**Option D: Delayed Start**
+- Additional review period after Phase I
+- Start date announced during Phase I
+- Maximum deliberation time
+- Could extend to 18-21 days total
+
+**Community will vote on this during Phase I.B**
+
+### Content of Signal Proposal
+
+**Automatically Incorporated from Phase I:**
+
+1. **Final Candidate List**
+   - Names, wallet addresses, statements
+   - Nomination timestamps
+   - Community assessment scores (if available)
+
+2. **Role Definition Results**
+   - Chosen penalty mechanism for non-signaling
+   - Determined term length
+   - Agreed compensation amount
+   - Availability requirements
+
+3. **Process Improvements**
+   - Any suggested changes from Phase I discussion
+   - Technical refinements
+   - Timeline adjustments
+
+**Manual Addition:**
+- Phase I on-chain data extracted and formatted
+- Added to Snapshot proposal text
+- Verified by multiple community members
+
+**Vote Structure:**
+
+```
+For: Approve full proposal as specified
+Against: Reject and return to discussion
+Abstain: Counted toward quorum, neutral
+```
+
+### Quorum Thresholds Referenced
+
+**For Context (not voted in this proposal):**
+
+AavegotchiDAO typically uses:
+- **5% quorum:** Minor decisions (parameter tweaks)
+- **10% quorum:** Medium changes (new features)
+- **20% quorum:** Major changes (protocol alterations)
+
+**This proposal uses 20%** as signer selection is security-critical.
+
+### Future Vision: Automated Signal→Core Transition
+
+**Not implemented yet, but planned:**
+
+Eventually, successful Signal proposals will automatically:
+1. Trigger smart contract to create Core Proposal
+2. Transfer all data on-chain
+3. Start Core Proposal voting period
+4. Execute if Core Proposal passes
+
+**Benefits:**
+- Eliminates manual data transfer
+- Reduces human error
+- Faster governance cycle
+- More trustless process
+
+---
+
+## Phase III: Core Proposal
+
+**Duration:** 11-18 days (depends on Phase II timing)  
+**Deadline:** February 28, 2026  
+**Platform:** On-chain (AavegotchiDAO contracts)
+
+### Core Proposal Voting
+
+**Standard Path:**
+
+```
+Signal passes (≥20% quorum) 
+→ Core Proposal created
+→ 7-day voting period
+→ If passes: Execute proposal
+→ If fails: Return to discussion
+```
+
+**Experimental Path (New Feature):**
+
+```
+Signal passes with REDUCED quorum (10-19%)
+→ Core Proposal created
+→ 7-day voting period  
+→ If passes: Enter VETO PERIOD (Phase IV)
+→ If fails: Return to discussion
+```
+
+**Rationale for Veto Period:**
+
+For proposals with partial community support:
+- Allows time for opposition to mobilize
+- Community can veto if strong objection emerges
+- Balances efficiency with safety
+- Tests new governance primitive
+
+### Execution Details
+
+**If Core Proposal Passes:**
+
+1. **Elected Signers Announced**
+   - Public announcement on all channels
+   - Wallet addresses published
+   - Term start date confirmed
+
+2. **Onboarding Process**
+   - Hardware wallet verification
+   - Multi-Sig wallet access granted
+   - Discord/Telegram contact confirmed
+   - Availability signaling system activated
+
+3. **Term Begins**
+   - Official start date (e.g., March 1)
+   - First compensation payment scheduled
+   - Performance tracking initiated
+   - Old signers transition out (if applicable)
+
+4. **Ongoing Monitoring**
+   - Public dashboard shows signer activity
+   - Monthly community reports
+   - Quarterly performance reviews
+
+**If Core Proposal Fails:**
+
+- Return to community discussion
+- Identify failure reasons
+- Option to create modified proposal
+- Phase I can be reopened if needed
+
+---
+
+## Technical Implementation
+
+### Smart Contracts Required
+
+**1. Nomination Contract**
+- `nominate(address candidate, string statement)`
+- `withdrawNomination(uint256 nominationId)`
+- `getNominations() returns (Nomination[])`
+
+**2. Assessment Contract**  
+- `assessCandidate(address candidate, uint8[4] traitScores, string feedback)`
+- `getAggregatedScores(address candidate) returns (uint8[4])`
+
+**3. Availability Signaling Contract**
+- `updateStatus(Status newStatus)`
+- `getSignerStatus(address signer) returns (Status)`
+- `getActiveSigners() returns (address[])`
+
+**4. Performance Tracking Contract**
+- `recordSignature(address signer, uint256 timestamp)`
+- `calculateReliabilityScore(address signer) returns (uint8)`
+
+### Gas Cost Estimates
+
+**Per-Action Costs (Base Sepolia estimates):**
+- Nominate candidate: ~50,000 gas (~$0.10)
+- Assess candidate: ~80,000 gas (~$0.15)
+- Update availability: ~30,000 gas (~$0.05)
+- Record signature: ~40,000 gas (~$0.08)
+
+**Total Voter Cost (full participation):**
+- 1 nomination + 5 assessments = ~450,000 gas (~$0.85)
+
+### Data Storage
+
+**On-Chain:**
+- Candidate nominations
+- Assessment scores (aggregated only)
+- Signer availability status
+- Signature records
+
+**Off-Chain (IPFS):**
+- Detailed candidate statements (>280 chars)
+- Community feedback text
+- Historical performance data
+- Proposal discussion archives
+
+---
+
+## Risk Analysis
+
+### Technical Risks
+
+**1. Smart Contract Bugs**
+- **Mitigation:** Audit assessment contract before use
+- **Fallback:** Manual tally option available
+
+**2. Gas Price Spikes**
+- **Mitigation:** Users can wait for lower gas
+- **Fallback:** Extended voting periods if needed
+
+**3. On-Chain Data Manipulation**
+- **Mitigation:** Multiple independent verification
+- **Fallback:** Snapshot result is binding regardless
+
+### Governance Risks
+
+**1. Low Participation**
+- **Mitigation:** Extended Phase I timeline
+- **Fallback:** Lower quorum in future iterations
+
+**2. Voter Apathy**
+- **Mitigation:** Engaging candidate statements
+- **Fallback:** Incumbent signers continue if election fails
+
+**3. Candidate Pool Too Small**
+- **Mitigation:** Active recruitment during nomination
+- **Fallback:** Re-open nominations if <5 candidates
+
+### Security Risks
+
+**1. Unqualified Candidates Elected**
+- **Mitigation:** Community assessment, minimum requirements
+- **Fallback:** Veto period (if implemented)
+
+**2. Coordinated Voting Attack**
+- **Mitigation:** 20% quorum requirement
+- **Fallback:** Core Proposal can still fail
+
+**3. Signer Collusion Post-Election**
+- **Mitigation:** Ongoing performance tracking
+- **Fallback:** Emergency removal process (separate proposal)
+
+---
+
+## Success Metrics
+
+### Primary Metrics
+
+**Participation:**
+- ✅ >20% of voting power participates
+- ✅ >5 qualified candidates nominated
+- ✅ >50% of voters complete assessments
+
+**Quality:**
+- ✅ Elected signers meet all requirements
+- ✅ No technical issues during voting
+- ✅ Community expresses satisfaction (post-vote poll)
+
+**Process:**
+- ✅ All phases complete on schedule
+- ✅ Clear, transparent results
+- ✅ Smooth signer transition
+
+### Secondary Metrics
+
+**Innovation:**
+- 📊 On-chain voting participation rate
+- 📊 Assessment system usage statistics
+- 📊 Community feedback quality
+- 📊 Gas cost data collected
+
+**Long-term:**
+- 📈 Signer performance during term
+- 📈 Availability signaling compliance
+- 📈 Community trust in governance
+- 📈 Progress toward diamondCut() transfer
+
+---
+
+## Roadmap Connection
+
+### Immediate (This Proposal)
+
+**Milestone 1: Transparent Signer Selection**
+- First fully democratic, on-chain nomination process
+- Sets precedent for future governance decisions
+- Builds community confidence
+
+### Near-term (Next 6 Months)
+
+**Milestone 2: On-Chain Governance Infrastructure**
+- Refine assessment system based on data
+- Develop automated Signal→Core transition
+- Deploy performance tracking dashboard
+
+### Long-term (12-24 Months)
+
+**Milestone 3: Progressive Decentralization**
+- Apply lessons learned to other governance areas
+- Increase on-chain decision-making
+- Move closer to diamondCut() transfer readiness
+
+---
+
+## Appendices
+
+### Appendix A: Glossary
+
+- **diamondCut():** Smart contract function that allows protocol upgrades
+- **Multi-Sig:** Multi-signature wallet requiring multiple approvals
+- **Signal Proposal:** Off-chain vote to gauge community support
+- **Core Proposal:** On-chain vote with binding execution
+- **Quorum:** Minimum voting power required for valid decision
+- **ValuePoints:** Assessment currency for candidate evaluation
+
+### Appendix B: Example Timeline
+
+```
+Day 1-3 (72h):   Phase I.A - Nominations open
+Day 4-6 (72h):   Phase I.B - Role definition & assessments
+Day 7-13 (7d):   Phase II - Signal Proposal on Snapshot
+Day 14-21 (7d):  Phase III - Core Proposal on-chain
+Day 22-28:       Results & Signer Transition
+Feb 28:          New signers officially begin term
+```
+
+### Appendix C: Reference Implementation
+
+Smart contract code and frontend interface will be published at:
+- **GitHub:** [Repository Link]
+- **Testnet:** [Deployed Contract Address]
+- **Frontend:** [Voting Interface URL]
+
+---
+
+**This proposal represents AavegotchiDAO's next step toward truly decentralized, transparent, and accountable governance. Your participation makes it possible.**
+
+**Vote Schedule:**
+- Phase I.A Nominations: [Start Date]
+- Phase I.B Role Definition: [Start Date]  
+- Phase II Signal: [TBD]
+- Phase III Core: Ends February 28, 2026
+
+**Questions? Join the discussion:**
+- 💬 Discord: #multi-sig-governance
+- 📝 Forum: [Link]
+- 🐦 Twitter: @AavegotchiDAO
