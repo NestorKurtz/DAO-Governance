@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aavegotchi Foundation - Nominate Candidate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #f093fb, #f5576c, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #a0a0b0;
+            font-size: 1.1em;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 35px;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.1), rgba(245, 87, 108, 0.1));
+            border: 1px solid rgba(79, 172, 254, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            color: #4facfe;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .info-box p {
+            color: #a0a0b0;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e0e0e0;
+            font-size: 0.95em;
+        }
+
+        label .required {
+            color: #f5576c;
+        }
+
+        label .optional {
+            color: #666;
+            font-weight: normal;
+            font-size: 0.85em;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            font-size: 16px;
+            color: #fff;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+            background: rgba(255,255,255,0.08);
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.15);
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #666;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .char-count {
+            text-align: right;
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .char-count.warning {
+            color: #f5576c;
+        }
+
+        .wallet-section {
+            display: flex;
+            gap: 10px;
+        }
+
+        .wallet-section input {
+            flex: 1;
+        }
+
+        .connect-btn {
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .connect-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(118, 75, 162, 0.4);
+        }
+
+        .connect-btn.connected {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.3);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.success {
+            background: rgba(56, 239, 125, 0.15);
+            border: 1px solid rgba(56, 239, 125, 0.3);
+            color: #38ef7d;
+        }
+
+        .message.error {
+            background: rgba(245, 87, 108, 0.15);
+            border: 1px solid rgba(245, 87, 108, 0.3);
+            color: #f5576c;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.primary {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            border: none;
+        }
+
+        .current-candidates {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .current-candidates h3 {
+            color: #a0a0b0;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .candidate-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .candidate-chip {
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: #a0a0b0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 500px) {
+            .wallet-section {
+                flex-direction: column;
+            }
+
+            .connect-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Nominate a Candidate</h1>
+            <p class="subtitle">Multi-Sig Signer Election</p>
+        </header>
+
+        <div class="card">
+            <div class="info-box">
+                <h3>How Nominations Work</h3>
+                <p>
+                    Nominate someone you believe would make an excellent Multi-Sig signer.
+                    Candidates will be assessed by the community using a 4-trait evaluation system.
+                    You can nominate yourself or another community member.
+                </p>
+            </div>
+
+            <div class="message" id="message"></div>
+
+            <form id="nominationForm">
+                <div class="form-group">
+                    <label>
+                        Candidate Name <span class="required">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="candidateName"
+                        placeholder="e.g., Alice Johnson"
+                        required
+                        maxlength="50"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Candidate Wallet Address <span class="required">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="candidateAddress"
+                        placeholder="0x..."
+                        required
+                        pattern="^0x[a-fA-F0-9]{40}$"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Candidate Statement <span class="required">*</span>
+                        <span class="optional">(Why should they be a signer?)</span>
+                    </label>
+                    <textarea
+                        id="statement"
+                        placeholder="Describe the candidate's qualifications, experience, and why they would be a good Multi-Sig signer..."
+                        required
+                        maxlength="280"
+                    ></textarea>
+                    <div class="char-count" id="statementCount">0 / 280</div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        Your Wallet Address (Nominator) <span class="required">*</span>
+                    </label>
+                    <div class="wallet-section">
+                        <input
+                            type="text"
+                            id="nominatorAddress"
+                            placeholder="0x..."
+                            required
+                            pattern="^0x[a-fA-F0-9]{40}$"
+                        >
+                        <button type="button" class="connect-btn" id="connectWallet">
+                            Connect Wallet
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Submit Nomination
+                </button>
+            </form>
+
+            <div class="current-candidates">
+                <h3>Current Candidates</h3>
+                <div class="candidate-list" id="candidateList">
+                    Loading...
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="/assess.html" class="nav-link primary">Assess Candidates</a>
+            <a href="/results.html" class="nav-link">View Results</a>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '';
+
+        // Character counter for statement
+        const statementInput = document.getElementById('statement');
+        const statementCount = document.getElementById('statementCount');
+
+        statementInput.addEventListener('input', () => {
+            const count = statementInput.value.length;
+            statementCount.textContent = `${count} / 280`;
+            statementCount.classList.toggle('warning', count > 250);
+        });
+
+        // MetaMask connection
+        const connectBtn = document.getElementById('connectWallet');
+        const nominatorInput = document.getElementById('nominatorAddress');
+
+        connectBtn.addEventListener('click', async () => {
+            if (typeof window.ethereum === 'undefined') {
+                showMessage('MetaMask not detected. Please enter your address manually.', 'error');
+                return;
+            }
+
+            try {
+                connectBtn.innerHTML = '<span class="loading-spinner"></span>Connecting...';
+                const accounts = await window.ethereum.request({
+                    method: 'eth_requestAccounts'
+                });
+
+                if (accounts.length > 0) {
+                    nominatorInput.value = accounts[0];
+                    connectBtn.textContent = 'Connected';
+                    connectBtn.classList.add('connected');
+                }
+            } catch (error) {
+                showMessage('Failed to connect wallet: ' + error.message, 'error');
+                connectBtn.textContent = 'Connect Wallet';
+            }
+        });
+
+        // Auto-fill nominator if MetaMask is already connected
+        async function checkExistingConnection() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({
+                        method: 'eth_accounts'
+                    });
+                    if (accounts.length > 0) {
+                        nominatorInput.value = accounts[0];
+                        connectBtn.textContent = 'Connected';
+                        connectBtn.classList.add('connected');
+                    }
+                } catch (e) {
+                    // Silently fail
+                }
+            }
+        }
+
+        // Load existing candidates
+        async function loadCandidates() {
+            try {
+                const response = await fetch(`${API_BASE}/api/candidates`);
+                const data = await response.json();
+
+                const list = document.getElementById('candidateList');
+
+                if (data.candidates.length === 0) {
+                    list.innerHTML = '<span class="candidate-chip">No candidates yet - be the first!</span>';
+                } else {
+                    list.innerHTML = data.candidates.map(c =>
+                        `<span class="candidate-chip">${c.name}</span>`
+                    ).join('');
+                }
+            } catch (error) {
+                document.getElementById('candidateList').innerHTML =
+                    '<span class="candidate-chip">Error loading candidates</span>';
+            }
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type} show`;
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    messageEl.classList.remove('show');
+                }, 5000);
+            }
+        }
+
+        // Validate Ethereum address
+        function isValidAddress(address) {
+            return /^0x[a-fA-F0-9]{40}$/.test(address);
+        }
+
+        // Submit form
+        document.getElementById('nominationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const candidateAddress = document.getElementById('candidateAddress').value.trim();
+            const nominatorAddress = document.getElementById('nominatorAddress').value.trim();
+
+            // Validate addresses
+            if (!isValidAddress(candidateAddress)) {
+                showMessage('Invalid candidate wallet address', 'error');
+                return;
+            }
+
+            if (!isValidAddress(nominatorAddress)) {
+                showMessage('Invalid nominator wallet address', 'error');
+                return;
+            }
+
+            const formData = {
+                name: document.getElementById('candidateName').value.trim(),
+                address: candidateAddress,
+                statement: document.getElementById('statement').value.trim(),
+                nominatedBy: nominatorAddress
+            };
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading-spinner"></span>Submitting...';
+
+                const response = await fetch(`${API_BASE}/api/candidates`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showMessage('Nomination submitted successfully! The candidate can now be assessed.', 'success');
+                    document.getElementById('nominationForm').reset();
+                    statementCount.textContent = '0 / 280';
+                    loadCandidates();
+                } else {
+                    showMessage('Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error submitting nomination: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Nomination';
+            }
+        });
+
+        // Initialize
+        checkExistingConnection();
+        loadCandidates();
+    </script>
+</body>
+</html>
