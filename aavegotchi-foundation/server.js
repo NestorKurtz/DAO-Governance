@@ -62,6 +62,32 @@ async function initDatabase() {
         )
     `);
 
+    db.run(`
+        CREATE TABLE IF NOT EXISTS payment_votes (
+            id TEXT PRIMARY KEY,
+            voter TEXT NOT NULL UNIQUE,
+            choice1 INTEGER NOT NULL,
+            choice2 INTEGER NOT NULL,
+            choice3 INTEGER NOT NULL,
+            payment_method TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+
+    db.run(`
+        CREATE TABLE IF NOT EXISTS expense_requests (
+            id TEXT PRIMARY KEY,
+            amount DECIMAL(12,2) NOT NULL,
+            currency TEXT DEFAULT 'USDC',
+            description TEXT NOT NULL,
+            payee_name TEXT,
+            payee_wallet TEXT NOT NULL,
+            submitted_by TEXT NOT NULL,
+            status TEXT DEFAULT 'pending' CHECK(status IN ('pending','approved','rejected')),
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `);
+
     // Insert default candidates if table is empty
     const result = db.exec('SELECT COUNT(*) as count FROM candidates');
     const count = result[0]?.values[0]?.[0] || 0;
@@ -422,6 +448,191 @@ app.get('/api/stats', (req, res) => {
     });
 });
 
+// Submit payment/compensation vote
+app.post('/api/payment-vote', (req, res) => {
+    try {
+        const { voter, compensationChoices, paymentMethod } = req.body;
+
+        if (!voter || !compensationChoices || !paymentMethod) {
+            return res.status(400).json({
+                success: false,
+                error: 'Voter, compensation choices, and payment method are required'
+            });
+        }
+
+        if (!Array.isArray(compensationChoices) || compensationChoices.length !== 3) {
+            return res.status(400).json({
+                success: false,
+                error: 'Exactly 3 compensation choices required'
+            });
+        }
+
+        const validMethods = ['lump-sum', 'quarterly', 'performance', 'hybrid'];
+        if (!validMethods.includes(paymentMethod)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid payment method'
+            });
+        }
+
+        const [c1, c2, c3] = compensationChoices.map(Number);
+        if (c1 < 200 || c3 > 3000 || c2 < 200 || c2 > 3000 || c1 < 200 || c1 > 3000) {
+            return res.status(400).json({
+                success: false,
+                error: 'Choices must be between $200 and $3,000 USDC'
+            });
+        }
+
+        if (new Set([c1, c2, c3]).size < 3) {
+            return res.status(400).json({
+                success: false,
+                error: 'All 3 choices must be different'
+            });
+        }
+
+        const existing = queryOne('SELECT id FROM payment_votes WHERE voter = ?', [voter]);
+        if (existing) {
+            return res.status(400).json({
+                success: false,
+                error: 'You have already submitted a payment vote'
+            });
+        }
+
+        const id = crypto.randomBytes(16).toString('hex');
+        execute(`
+            INSERT INTO payment_votes (id, voter, choice1, choice2, choice3, payment_method)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `, [id, voter, c1, c2, c3, paymentMethod]);
+
+        console.log(`Payment vote submitted: ${voter.substring(0, 8)}...`);
+
+        res.json({
+            success: true,
+            message: 'Payment vote submitted successfully',
+            voteId: id
+        });
+    } catch (error) {
+        console.error('Payment vote error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error'
+        });
+    }
+});
+
+// Get payment vote results (for future results page)
+app.get('/api/payment-results', (req, res) => {
+    const votes = queryAll(`
+        SELECT choice1, choice2, choice3, payment_method as paymentMethod
+        FROM payment_votes
+    `);
+
+    if (votes.length === 0) {
+        return res.json({
+            success: true,
+            voteCount: 0,
+            compensationMedian: null,
+            paymentMethodCounts: { 'lump-sum': 0, quarterly: 0, performance: 0, hybrid: 0 }
+        });
+    }
+
+    const medians = votes.map(v => {
+        const sorted = [v.choice1, v.choice2, v.choice3].sort((a, b) => a - b);
+        return sorted[1];
+    });
+    const sortedMedians = medians.sort((a, b) => a - b);
+    const mid = Math.floor(sortedMedians.length / 2);
+    const compensationMedian = sortedMedians.length % 2 === 0
+        ? (sortedMedians[mid - 1] + sortedMedians[mid]) / 2
+        : sortedMedians[mid];
+
+    const paymentMethodCounts = votes.reduce((acc, v) => {
+        acc[v.paymentMethod] = (acc[v.paymentMethod] || 0) + 1;
+        return acc;
+    }, {});
+
+    res.json({
+        success: true,
+        voteCount: votes.length,
+        compensationMedian,
+        paymentMethodCounts
+    });
+});
+
+// Treasury balance - proxy to accounting app
+const ACCOUNTING_API = process.env.ACCOUNTING_API_URL || 'http://localhost:5000';
+app.get('/api/treasury', async (req, res) => {
+    try {
+        const response = await fetch(`${ACCOUNTING_API}/api/treasury`);
+        if (!response.ok) throw new Error('Treasury API error');
+        const data = await response.json();
+        res.json(data);
+    } catch (err) {
+        console.error('Treasury fetch error:', err.message);
+        res.json({
+            balance: 0,
+            totalIncome: 0,
+            totalExpense: 0,
+            currency: 'USD',
+            _fallback: true,
+            _error: 'Could not connect to accounting app. Ensure it is running.'
+        });
+    }
+});
+
+// Submit expense request
+app.post('/api/expense-requests', (req, res) => {
+    try {
+        const { amount, currency, description, payeeName, payeeWallet, submittedBy } = req.body;
+
+        if (!amount || !description || !payeeWallet || !submittedBy) {
+            return res.status(400).json({
+                success: false,
+                error: 'Amount, description, payee wallet, and submitter are required'
+            });
+        }
+
+        const amt = parseFloat(amount);
+        if (isNaN(amt) || amt <= 0) {
+            return res.status(400).json({
+                success: false,
+                error: 'Amount must be a positive number'
+            });
+        }
+
+        const id = crypto.randomBytes(16).toString('hex');
+        execute(`
+            INSERT INTO expense_requests (id, amount, currency, description, payee_name, payee_wallet, submitted_by, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'pending')
+        `, [id, amt, currency || 'USDC', description, payeeName || '', payeeWallet, submittedBy]);
+
+        console.log(`Expense request submitted: ${amt} ${currency || 'USDC'} - ${description}`);
+
+        res.json({
+            success: true,
+            message: 'Expense request submitted for approval',
+            requestId: id
+        });
+    } catch (error) {
+        console.error('Expense request error:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error'
+        });
+    }
+});
+
+// Get expense requests
+app.get('/api/expense-requests', (req, res) => {
+    const requests = queryAll(`
+        SELECT id, amount, currency, description, payee_name as payeeName, payee_wallet as payeeWallet,
+               submitted_by as submittedBy, status, created_at as createdAt
+        FROM expense_requests
+        ORDER BY created_at DESC
+    `);
+    res.json({ success: true, requests });
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
     res.json({
@@ -487,6 +698,8 @@ async function startServer() {
 |  http://localhost:${PORT}/assess.html      |
 |  http://localhost:${PORT}/results.html     |
 |  http://localhost:${PORT}/nominate.html    |
+|  http://localhost:${PORT}/payment.html     |
+|  http://localhost:${PORT}/expense-submissions.html |
 +==========================================+
         `);
     });

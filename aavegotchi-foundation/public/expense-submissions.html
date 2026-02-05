@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aavegotchi Foundation - Expense Submissions</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0c4a6e 0%, #0e7490 50%, #155e75 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+        }
+
+        /* Sidebar - Treasury */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+        .treasury-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 20px;
+        }
+
+        .treasury-card h3 {
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #67e8f9;
+            margin-bottom: 16px;
+        }
+
+        .treasury-balance {
+            font-size: 2em;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .treasury-balance.positive { color: #5eead4; }
+        .treasury-balance.negative { color: #fda4af; }
+
+        .treasury-detail {
+            font-size: 0.85em;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+
+        .treasury-loading, .treasury-error {
+            font-size: 0.9em;
+            color: #94a3b8;
+        }
+
+        .treasury-error { color: #fda4af; }
+
+        .accounting-link {
+            display: block;
+            margin-top: 16px;
+            padding: 10px 14px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            color: #67e8f9;
+            text-decoration: none;
+            font-size: 0.9em;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .accounting-link:hover {
+            background: rgba(255,255,255,0.12);
+        }
+
+        /* Main content */
+        .main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.2em;
+            margin-bottom: 8px;
+            background: linear-gradient(90deg, #67e8f9, #22d3ee, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.1em;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 35px;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.1));
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 { color: #22d3ee; margin-bottom: 10px; font-size: 1em; }
+        .info-box p { color: #94a3b8; font-size: 0.9em; line-height: 1.6; }
+
+        .form-group { margin-bottom: 25px; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e2e8f0;
+            font-size: 0.95em;
+        }
+
+        label .required { color: #f43f5e; }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            font-size: 16px;
+            color: #fff;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #22d3ee;
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.15);
+        }
+
+        select option { background: #0c4a6e; color: #fff; }
+        textarea { resize: vertical; min-height: 100px; }
+
+        .wallet-section { display: flex; gap: 10px; }
+        .wallet-section input { flex: 1; }
+
+        .connect-btn {
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+
+        .connect-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .connect-btn.connected { background: linear-gradient(135deg, #10b981, #059669); }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #22d3ee, #06b6d4);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(34, 211, 238, 0.3);
+        }
+
+        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .message {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #34d399;
+        }
+
+        .message.error {
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: #fb7185;
+        }
+
+        .message.show { display: block; }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.primary { background: linear-gradient(135deg, #22d3ee, #06b6d4); border: none; }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 900px) {
+            .layout { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .treasury-card { position: static; }
+        }
+
+        @media (max-width: 500px) {
+            .wallet-section { flex-direction: column; }
+            .connect-btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="treasury-card">
+                <h3>Treasury Balance</h3>
+                <div id="treasuryContent">
+                    <div class="treasury-loading">Loading...</div>
+                </div>
+                <a href="/accounting-app/" class="accounting-link" target="_blank" rel="noopener">
+                    Open Accounting App →
+                </a>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header>
+                <h1>General Expense Submissions</h1>
+                <p class="subtitle">Request disbursement from DAO treasury</p>
+            </header>
+
+            <div class="card">
+                <div class="info-box">
+                    <h3>How It Works</h3>
+                    <p>
+                        Submit an expense request for multi-sig approval. Approved requests are recorded in the
+                        accounting app and processed according to DAO governance. The treasury balance shown
+                        reflects the current accounting ledger.
+                    </p>
+                </div>
+
+                <div class="message" id="message"></div>
+
+                <form id="expenseForm">
+                    <div class="form-group">
+                        <label>Amount <span class="required">*</span></label>
+                        <input type="number" id="amount" placeholder="e.g. 500" step="0.01" min="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select id="currency">
+                            <option value="USDC">USDC</option>
+                            <option value="USD">USD</option>
+                            <option value="GHST">GHST</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description <span class="required">*</span></label>
+                        <textarea id="description" placeholder="Describe the expense purpose, recipient, and justification..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Payee Name <span class="optional">(optional)</span></label>
+                        <input type="text" id="payeeName" placeholder="e.g. John Doe">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Payee Wallet Address <span class="required">*</span></label>
+                        <input type="text" id="payeeWallet" placeholder="0x..." required pattern="^0x[a-fA-F0-9]{40}$">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Your Wallet (Submitter) <span class="required">*</span></label>
+                        <div class="wallet-section">
+                            <input type="text" id="submittedBy" placeholder="0x..." required pattern="^0x[a-fA-F0-9]{40}$">
+                            <button type="button" class="connect-btn" id="connectWallet">Connect Wallet</button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">Submit Expense Request</button>
+                </form>
+            </div>
+
+            <div class="nav-links">
+                <a href="/nominate.html" class="nav-link">Nominate</a>
+                <a href="/assess.html" class="nav-link">Assess</a>
+                <a href="/payment.html" class="nav-link">Compensation</a>
+                <a href="/results.html" class="nav-link primary">Results</a>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE = '';
+
+        async function loadTreasury() {
+            const el = document.getElementById('treasuryContent');
+            try {
+                const res = await fetch(`${API_BASE}/api/treasury`);
+                const data = await res.json();
+
+                const balance = parseFloat(data.balance || 0);
+                const totalIncome = parseFloat(data.totalIncome || 0);
+                const totalExpense = parseFloat(data.totalExpense || 0);
+
+                el.innerHTML = `
+                    <div class="treasury-balance ${balance >= 0 ? 'positive' : 'negative'}">
+                        $${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                    <div class="treasury-detail">Income: $${totalIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
+                    <div class="treasury-detail">Expenses: $${totalExpense.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
+                    ${data._fallback ? '<div class="treasury-error" style="margin-top:8px;">Accounting app not connected</div>' : ''}
+                `;
+            } catch (err) {
+                el.innerHTML = `<div class="treasury-error">Could not load treasury. Ensure the accounting app is running.</div>`;
+            }
+        }
+
+        const connectBtn = document.getElementById('connectWallet');
+        const submittedByInput = document.getElementById('submittedBy');
+
+        connectBtn.addEventListener('click', async () => {
+            if (typeof window.ethereum === 'undefined') {
+                showMessage('MetaMask not detected. Enter your address manually.', 'error');
+                return;
+            }
+            try {
+                connectBtn.innerHTML = '<span class="loading-spinner"></span>Connecting...';
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                if (accounts.length > 0) {
+                    submittedByInput.value = accounts[0];
+                    connectBtn.textContent = 'Connected';
+                    connectBtn.classList.add('connected');
+                }
+            } catch (error) {
+                showMessage('Failed to connect: ' + error.message, 'error');
+                connectBtn.textContent = 'Connect Wallet';
+            }
+        });
+
+        async function checkExistingConnection() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) {
+                        submittedByInput.value = accounts[0];
+                        connectBtn.textContent = 'Connected';
+                        connectBtn.classList.add('connected');
+                    }
+                } catch (e) {}
+            }
+        }
+
+        function showMessage(text, type) {
+            const m = document.getElementById('message');
+            m.textContent = text;
+            m.className = `message ${type} show`;
+            if (type === 'success') setTimeout(() => m.classList.remove('show'), 5000);
+        }
+
+        function isValidAddress(addr) {
+            return /^0x[a-fA-F0-9]{40}$/.test(addr);
+        }
+
+        document.getElementById('expenseForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submittedBy = submittedByInput.value.trim();
+            const payeeWallet = document.getElementById('payeeWallet').value.trim();
+
+            if (!isValidAddress(submittedBy) || !isValidAddress(payeeWallet)) {
+                showMessage('Invalid wallet address', 'error');
+                return;
+            }
+
+            const formData = {
+                amount: parseFloat(document.getElementById('amount').value),
+                currency: document.getElementById('currency').value,
+                description: document.getElementById('description').value.trim(),
+                payeeName: document.getElementById('payeeName').value.trim(),
+                payeeWallet,
+                submittedBy
+            };
+
+            try {
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading-spinner"></span>Submitting...';
+
+                const res = await fetch(`${API_BASE}/api/expense-requests`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    showMessage('Expense request submitted. Awaiting multi-sig approval.', 'success');
+                    document.getElementById('expenseForm').reset();
+                    loadTreasury();
+                } else {
+                    showMessage('Error: ' + (data.error || 'Failed'), 'error');
+                }
+            } catch (error) {
+                showMessage('Error: ' + error.message, 'error');
+            } finally {
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Expense Request';
+            }
+        });
+
+        loadTreasury();
+        checkExistingConnection();
+        setInterval(loadTreasury, 60000);
+    </script>
+</body>
+</html>
