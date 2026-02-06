@@ -476,7 +476,7 @@ app.post('/api/payment-vote', (req, res) => {
         }
 
         const [c1, c2, c3] = compensationChoices.map(Number);
-        if (c1 < 200 || c3 > 3000 || c2 < 200 || c2 > 3000 || c1 < 200 || c1 > 3000) {
+        if (c1 < 200 || c1 > 3000 || c2 < 200 || c2 > 3000 || c3 < 200 || c3 > 3000) {
             return res.status(400).json({
                 success: false,
                 error: 'Choices must be between $200 and $3,000 USDC'

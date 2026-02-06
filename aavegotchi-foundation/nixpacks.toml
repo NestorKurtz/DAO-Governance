@@ -1,0 +1,9 @@
+# Fallback if Dockerfile is not used – ensures Nixpacks detects Node.js
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = ["npm ci --omit=dev"]
+
+[start]
+cmd = "node server.js"
