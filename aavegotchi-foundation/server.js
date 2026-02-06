@@ -3,6 +3,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const path = require('path');
 const crypto = require('crypto');
 const fs = require('fs');
@@ -147,7 +149,61 @@ function execute(sql, params = []) {
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+
+// Security Headers
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https:"],
+        },
+    },
+    crossOriginEmbedderPolicy: false,
+}));
+
+// Rate Limiting - 100 requests per 15 minutes per IP
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: { success: false, error: 'Too many requests, please try again later.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use('/api/', limiter);
+
+// Stricter limit for write operations
+const writeLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    message: { success: false, error: 'Too many submissions, please try again later.' },
+});
+app.use('/api/submit-assessment', writeLimiter);
+app.use('/api/candidates', writeLimiter);
+app.use('/api/payment-vote', writeLimiter);
+app.use('/api/expense-requests', writeLimiter);
+
+// CORS - nur erlaubte Domains
+const allowedOrigins = [
+    'https://assess.aavegotchidao.cloud',
+    'https://aavegotchidao.cloud',
+    'http://localhost:3000'
+];
+
+app.use(cors({
+    origin: function(origin, callback) {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('CORS not allowed'));
+        }
+    },
+    credentials: true
+}));
+
 app.use(express.static('public'));
 
 // ============================================
