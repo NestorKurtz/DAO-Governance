@@ -1,0 +1,14 @@
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 2rem;
+}
+
+.chart-card {
+  min-height: 400px;
+}
+
+.chart-card h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+}

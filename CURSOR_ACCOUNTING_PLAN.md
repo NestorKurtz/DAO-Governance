@@ -1,11 +1,15 @@
 # Aavegotchi DAO Accounting App - Cursor Entwicklungsplan
 
+> **→ Aligned Roadmap:** See [`accounting-app/ACCOUNTING_ROADMAP.md`](accounting-app/ACCOUNTING_ROADMAP.md) for the unified plan that builds on the existing app and incorporates this plan.
+
 ## Projektziel
 Vollständige Buchhaltung für Aavegotchi DAO für die Jahre 2024 und 2025.
 - Alle Einnahmen und Ausgaben erfassen
 - Kategorisierung nach DAO-Standards
 - Export für Steuern/Audits
 - Integration mit dem Foundation Assessment System
+
+**Datenbasis:** Budget- und Treasury-Daten für 2024/2025 erfordern **laufendes bzw. geplantes Scraping** (Subgraphs, Polygonscan), nicht nur manuellen Import. Siehe `accounting-app/ACCOUNTING_ROADMAP.md` Phase 4.5 und Skill `.cursor/skills/blockchain-data-scraper/`.
 
 ---
 

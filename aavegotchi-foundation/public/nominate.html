@@ -463,6 +463,14 @@
             }
         }
 
+        // Escape user input for safe insertion into HTML (prevents XSS)
+        function escapeHtml(str) {
+            if (str == null) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
         // Load existing candidates
         async function loadCandidates() {
             try {
@@ -475,7 +483,7 @@
                     list.innerHTML = '<span class="candidate-chip">No candidates yet - be the first!</span>';
                 } else {
                     list.innerHTML = data.candidates.map(c =>
-                        `<span class="candidate-chip">${c.name}</span>`
+                        `<span class="candidate-chip">${escapeHtml(c.name)}</span>`
                     ).join('');
                 }
             } catch (error) {

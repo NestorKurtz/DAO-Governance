@@ -1,0 +1,32 @@
+---
+description: Global code style, commits, security, performance, and accessibility standards
+alwaysApply: true
+---
+
+# Project Rules
+
+## Code Style
+- TypeScript strict mode
+- Functional components (React)
+- Tailwind CSS (utility-first)
+- ESLint + Prettier
+
+## Commit Messages
+Format: `type(scope): message`
+Types: feat, fix, docs, style, refactor, test, chore
+
+## Security
+- No API keys in code
+- Environment variables for secrets
+- Input validation on all user inputs
+
+## Performance
+- Lazy load images
+- Code splitting for routes
+- Bundle size < 200KB initial
+
+## Accessibility
+- Semantic HTML
+- ARIA labels
+- Keyboard navigation
+- WCAG AA compliance

@@ -154,9 +154,9 @@ app.use(express.static('public'));
 // ROUTES
 // ============================================
 
-// Welcome route
+// Welcome route - Landing Page
 app.get('/', (req, res) => {
-    res.redirect('/assess.html');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Get all candidates

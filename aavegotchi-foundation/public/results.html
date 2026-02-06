@@ -316,6 +316,14 @@
     <script>
         const API_BASE = '';
 
+        // Escape user input for safe insertion into HTML (prevents XSS)
+        function escapeHtml(str) {
+            if (str == null) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
         async function loadData() {
             try {
                 const [statsRes, resultsRes] = await Promise.all([
@@ -340,7 +348,7 @@
                     `Last updated: ${new Date().toLocaleTimeString()}`;
             } catch (error) {
                 document.getElementById('leaderboardBody').innerHTML =
-                    `<div class="error">Error loading results: ${error.message}</div>`;
+                    `<div class="error">Error loading results: ${escapeHtml(error.message)}</div>`;
             }
         }
 
@@ -355,14 +363,16 @@
             body.innerHTML = results.map((result, index) => {
                 const rank = index + 1;
                 const rankClass = rank <= 3 ? `rank-${rank}` : '';
+                const name = escapeHtml(result.candidate.name);
+                const statement = escapeHtml(result.candidate.statement || '');
 
                 if (!result.scores) {
                     return `
                         <div class="candidate-row">
                             <div class="rank ${rankClass}">${rank}</div>
                             <div class="candidate-info">
-                                <div class="candidate-name">${result.candidate.name}</div>
-                                <div class="candidate-statement">${result.candidate.statement || ''}</div>
+                                <div class="candidate-name">${name}</div>
+                                <div class="candidate-statement">${statement}</div>
                             </div>
                             <div class="score no-assessments" colspan="5">No assessments yet</div>
                         </div>
@@ -373,8 +383,8 @@
                     <div class="candidate-row">
                         <div class="rank ${rankClass}">${rank}</div>
                         <div class="candidate-info">
-                            <div class="candidate-name">${result.candidate.name}</div>
-                            <div class="candidate-statement">${result.candidate.statement || ''}</div>
+                            <div class="candidate-name">${name}</div>
+                            <div class="candidate-statement">${statement}</div>
                         </div>
                         <div class="score score-technical">
                             ${result.scores.technical.toFixed(0)}
