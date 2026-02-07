@@ -9,6 +9,17 @@ function getSelectors(contract) {
   return selectors;
 }
 
+async function deployContract(name, ...args) {
+  const Factory = await hre.ethers.getContractFactory(name);
+  const contract = await Factory.deploy(...args);
+  const tx = contract.deploymentTransaction();
+  // Wait for 1 confirmation to ensure nonce is synced
+  await tx.wait(1);
+  const address = await contract.getAddress();
+  console.log(`   ${name}: ${address}`);
+  return contract;
+}
+
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
   console.log("Deploying Diamond with account:", deployer.address);
@@ -16,18 +27,12 @@ async function main() {
 
   // Deploy DiamondCutFacet
   console.log("\n1. Deploying DiamondCutFacet...");
-  const DiamondCutFacet = await hre.ethers.getContractFactory("DiamondCutFacet");
-  const diamondCutFacet = await DiamondCutFacet.deploy();
-  await diamondCutFacet.waitForDeployment();
-  console.log("   DiamondCutFacet:", await diamondCutFacet.getAddress());
+  const diamondCutFacet = await deployContract("DiamondCutFacet");
 
   // Deploy Diamond
   console.log("2. Deploying Diamond...");
-  const Diamond = await hre.ethers.getContractFactory("Diamond");
-  const diamond = await Diamond.deploy(deployer.address, await diamondCutFacet.getAddress());
-  await diamond.waitForDeployment();
+  const diamond = await deployContract("Diamond", deployer.address, await diamondCutFacet.getAddress());
   const diamondAddress = await diamond.getAddress();
-  console.log("   Diamond:", diamondAddress);
 
   // Deploy facets
   const FacetNames = [
@@ -43,14 +48,9 @@ async function main() {
   console.log("3. Deploying facets...");
 
   for (const FacetName of FacetNames) {
-    const Facet = await hre.ethers.getContractFactory(FacetName);
-    const facet = await Facet.deploy();
-    await facet.waitForDeployment();
-    const facetAddress = await facet.getAddress();
-    console.log(`   ${FacetName}: ${facetAddress}`);
-
+    const facet = await deployContract(FacetName);
     cut.push({
-      facetAddress: facetAddress,
+      facetAddress: await facet.getAddress(),
       action: 0, // Add
       functionSelectors: getSelectors(facet),
     });
@@ -60,7 +60,7 @@ async function main() {
   console.log("4. Adding facets to Diamond...");
   const diamondCut = await hre.ethers.getContractAt("IDiamondCut", diamondAddress);
   const tx = await diamondCut.diamondCut(cut, hre.ethers.ZeroAddress, "0x");
-  await tx.wait();
+  await tx.wait(1);
   console.log("   All facets added successfully!");
 
   // Verify

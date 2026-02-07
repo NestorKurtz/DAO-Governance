@@ -478,11 +478,12 @@
                 const data = await response.json();
 
                 const list = document.getElementById('candidateList');
+                const candidates = data.candidates || [];
 
-                if (data.candidates.length === 0) {
+                if (candidates.length === 0) {
                     list.innerHTML = '<span class="candidate-chip">No candidates yet - be the first!</span>';
                 } else {
-                    list.innerHTML = data.candidates.map(c =>
+                    list.innerHTML = candidates.map(c =>
                         `<span class="candidate-chip">${escapeHtml(c.name)}</span>`
                     ).join('');
                 }

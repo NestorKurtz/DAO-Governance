@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aavegotchi Foundation - Candidate Assessment</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .candidate-select {
+            margin-bottom: 30px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .trait-section {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .trait-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .trait-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .trait-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .total {
+            text-align: center;
+            padding: 20px;
+            background: #667eea;
+            color: white;
+            border-radius: 8px;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .total.warning {
+            background: #ff6b6b;
+        }
+        
+        .total.valid {
+            background: #51cf66;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .feedback {
+            margin: 20px 0;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎃 Aavegotchi Foundation</h1>
+        <p class="subtitle">Candidate Assessment System</p>
+        
+        <div class="message" id="message"></div>
+        
+        <form id="assessmentForm">
+            <div class="candidate-select">
+                <label for="candidate">Select Candidate:</label>
+                <select id="candidate" name="candidate" required>
+                    <option value="">-- Choose a candidate --</option>
+                </select>
+            </div>
+            
+            <div class="candidate-select">
+                <label for="assessor">Your Wallet Address:</label>
+                <input type="text" id="assessor" name="assessor" placeholder="0x..." required>
+            </div>
+            
+            <div class="trait-section">
+                <div class="trait-header">
+                    <span class="trait-name">Technical Competence</span>
+                    <span class="trait-value" id="technicalValue">25</span>
+                </div>
+                <input type="range" id="technical" name="technical" min="5" max="85" value="25" step="1">
+            </div>
+            
+            <div class="trait-section">
+                <div class="trait-header">
+                    <span class="trait-name">Reliability & Commitment</span>
+                    <span class="trait-value" id="reliabilityValue">25</span>
+                </div>
+                <input type="range" id="reliability" name="reliability" min="5" max="85" value="25" step="1">
+            </div>
+            
+            <div class="trait-section">
+                <div class="trait-header">
+                    <span class="trait-name">Communication & Transparency</span>
+                    <span class="trait-value" id="communicationValue">25</span>
+                </div>
+                <input type="range" id="communication" name="communication" min="5" max="85" value="25" step="1">
+            </div>
+            
+            <div class="trait-section">
+                <div class="trait-header">
+                    <span class="trait-name">DAO Values Alignment</span>
+                    <span class="trait-value" id="valuesValue">25</span>
+                </div>
+                <input type="range" id="values" name="values" min="5" max="85" value="25" step="1">
+            </div>
+            
+            <div class="total" id="total">Total: 100</div>
+            
+            <div class="feedback">
+                <label for="feedback">Optional Feedback (max 69 characters):</label>
+                <textarea id="feedback" name="feedback" maxlength="69" placeholder="Share your thoughts..."></textarea>
+            </div>
+            
+            <button type="submit" id="submitBtn">Submit Assessment</button>
+        </form>
+    </div>
+    
+    <script>
+        const API_BASE = '';
+        
+        // Load candidates
+        async function loadCandidates() {
+            try {
+                const response = await fetch(`${API_BASE}/api/candidates`);
+                const data = await response.json();
+                
+                const select = document.getElementById('candidate');
+                data.candidates.forEach(candidate => {
+                    const option = document.createElement('option');
+                    option.value = candidate.id;
+                    option.textContent = `${candidate.name} - ${candidate.statement}`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                showMessage('Error loading candidates: ' + error.message, 'error');
+            }
+        }
+        
+        // Update trait values
+        const traits = ['technical', 'reliability', 'communication', 'values'];
+        traits.forEach(trait => {
+            const slider = document.getElementById(trait);
+            const valueDisplay = document.getElementById(trait + 'Value');
+            
+            slider.addEventListener('input', () => {
+                valueDisplay.textContent = slider.value;
+                updateTotal();
+            });
+        });
+        
+        // Update total
+        function updateTotal() {
+            const total = traits.reduce((sum, trait) => {
+                return sum + parseInt(document.getElementById(trait).value);
+            }, 0);
+            
+            const totalEl = document.getElementById('total');
+            totalEl.textContent = `Total: ${total}`;
+            
+            totalEl.classList.remove('warning', 'valid');
+            if (total < 100) {
+                totalEl.classList.add('warning');
+            } else if (total === 100) {
+                totalEl.classList.add('valid');
+            }
+            
+            document.getElementById('submitBtn').disabled = total !== 100;
+        }
+        
+        // Show message
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = `message ${type} show`;
+            
+            setTimeout(() => {
+                messageEl.classList.remove('show');
+            }, 5000);
+        }
+        
+        // Submit form
+        document.getElementById('assessmentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                candidate: document.getElementById('candidate').value,
+                assessor: document.getElementById('assessor').value,
+                traits: {
+                    technical: document.getElementById('technical').value,
+                    reliability: document.getElementById('reliability').value,
+                    communication: document.getElementById('communication').value,
+                    values: document.getElementById('values').value
+                },
+                feedback: document.getElementById('feedback').value
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/submit-assessment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showMessage('Assessment submitted successfully!', 'success');
+                    document.getElementById('assessmentForm').reset();
+                    updateTotal();
+                } else {
+                    showMessage('Error: ' + data.error, 'error');
+                }
+            } catch (error) {
+                showMessage('Error submitting assessment: ' + error.message, 'error');
+            }
+        });
+        
+        // Initialize
+        loadCandidates();
+        updateTotal();
+    </script>
+</body>
+</html>

@@ -8,6 +8,7 @@ Vollständige Buchhaltung für Aavegotchi DAO für die Jahre 2024 und 2025.
 - Kategorisierung nach DAO-Standards
 - Export für Steuern/Audits
 - Integration mit dem Foundation Assessment System
+- dies erfordert kontinuierliches und terminisiertes Skraping
 
 **Datenbasis:** Budget- und Treasury-Daten für 2024/2025 erfordern **laufendes bzw. geplantes Scraping** (Subgraphs, Polygonscan), nicht nur manuellen Import. Siehe `accounting-app/ACCOUNTING_ROADMAP.md` Phase 4.5 und Skill `.cursor/skills/blockchain-data-scraper/`.
 

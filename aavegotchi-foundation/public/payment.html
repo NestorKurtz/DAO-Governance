@@ -553,6 +553,12 @@
                 return;
             }
 
+            const paymentMethodEl = document.querySelector('input[name="paymentMethod"]:checked');
+            if (!paymentMethodEl) {
+                showMessage('Please select a payment method.', 'error');
+                return;
+            }
+
             const formData = {
                 voter: voterAddress,
                 compensationChoices: [
@@ -560,7 +566,7 @@
                     parseInt(document.getElementById('choice2').value),
                     parseInt(document.getElementById('choice3').value)
                 ],
-                paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value
+                paymentMethod: paymentMethodEl.value
             };
 
             try {

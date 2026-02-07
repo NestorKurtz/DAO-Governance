@@ -1,0 +1,15 @@
+---
+description: When discussing project overview, synergies, connections, or next steps, consider all DAO-Governance projects and the project-manager agent context
+alwaysApply: false
+globs: **/README.md,**/PROJECT.md,**/ACCOUNTING_ROADMAP.md,**/CURSOR_ACCOUNTING_PLAN.md,**/tasks.md
+---
+
+# Project Manager Rule
+
+When the user asks for overview, connections, synergies, missing links, or next steps across projects:
+
+1. **Reference the project map** – Use `.cursor/agents/project-manager.md` for the current project list and connections.
+2. **Consider all projects** – accounting-app, treasury-dashboard, hungry-ghost, aavegotchi-foundation, aavegotchi-backend, contracts, and relevant skills (blockchain-data-scraper, dao-proposal-creator).
+3. **Identify reuse** – Shared config (dao-addresses), categories, API endpoints, env vars.
+4. **Suggest concrete next steps** – Prioritized, actionable, with hints on which project owns each step.
+5. **Keep docs in sync** – When adding integrations, update READMEs and docs in the affected project folders.
