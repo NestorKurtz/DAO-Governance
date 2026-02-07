@@ -25,6 +25,19 @@ Configure in Coolify:
 
 The app stores `assessments.db` in the working directory. For persistence, mount a volume at `/app` (may require adjusting DB path in code).
 
-## Domain
+## Domain / Landing page
 
-Configure `aavegotchidao.cloud` in Coolify as the public domain.
+### Root domain (aavegotchidao.cloud)
+
+1. In Coolify → **Resources** → **AavegotchiDAO > production**:
+2. **Delete** the red DAO-Governance resource (`nestor-kurtz/-d-a-o--governance:main`, sslip.io-URL) if it is broken or unused.
+3. **Edit** the aavegotchi-foundation app → **Domains**:
+   - Add `aavegotchidao.cloud`
+   - Add `www.aavegotchidao.cloud` (optional)
+4. Root (`https://aavegotchidao.cloud`) will show the home page (index.html) with prominent link to Nominations.
+
+### Existing subdomains
+
+- `assess.aavegotchidao.cloud` → /assess.html
+- `nominate.aavegotchidao.cloud` → /nominate.html
+- etc.

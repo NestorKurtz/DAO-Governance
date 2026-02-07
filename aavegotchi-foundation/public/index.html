@@ -149,7 +149,32 @@
             font-size: clamp(0.95rem, 2.5vw, 1.15rem);
             color: rgba(255, 255, 255, 0.6);
             font-weight: 500;
-            margin-bottom: 2.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .intro {
+            font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+            color: rgba(255, 255, 255, 0.75);
+            max-width: 480px;
+            margin: 0 auto 1.75rem;
+            line-height: 1.5;
+        }
+
+        .cta-nominate {
+            margin-bottom: 2rem;
+        }
+
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+
+        .or-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.45);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.75rem;
         }
 
         .buttons {
@@ -279,11 +304,17 @@
             <h1 class="logo">Aavegotchi DAO</h1>
             <p class="tagline">Governance · Elections · Treasury</p>
 
+            <p class="intro">Overview of DAO tools. Start by nominating candidates for signer elections, or assess existing nominees.</p>
+
+            <div class="cta-nominate">
+                <a href="/nominate.html" class="btn btn-primary btn-emoji btn-large">👻 Nominations – Nominate candidates</a>
+            </div>
+
+            <p class="or-label">Other tools</p>
             <div class="buttons">
-                <a href="/nominate.html" class="btn btn-primary btn-emoji">👻 Nominate</a>
                 <a href="/assess.html" class="btn btn-ghost btn-emoji">📋 Assess</a>
-                <a href="/payment.html" class="btn btn-ghost btn-emoji">💰 Compensation</a>
                 <a href="/results.html" class="btn btn-orange btn-emoji">🏆 Results</a>
+                <a href="/payment.html" class="btn btn-ghost btn-emoji">💰 Compensation</a>
                 <a href="/expense-submissions.html" class="btn btn-ghost btn-emoji">📤 Expenses</a>
             </div>
         </section>
