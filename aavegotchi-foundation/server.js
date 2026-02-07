@@ -147,6 +147,17 @@ function execute(sql, params = []) {
     saveDatabase();
 }
 
+// Generate unique candidate ID; avoids PRIMARY KEY violation when names collide
+function generateUniqueCandidateId(baseId) {
+    let id = baseId;
+    let suffix = 2;
+    while (queryOne('SELECT id FROM candidates WHERE id = ?', [id])) {
+        id = `${baseId}-${suffix}`;
+        suffix++;
+    }
+    return id;
+}
+
 // Middleware
 app.use(express.json());
 
@@ -263,9 +274,10 @@ app.post('/api/candidates', (req, res) => {
             });
         }
 
-        const id = name.toLowerCase().replace(/\s+/g, '-');
+        const baseId = (name.toLowerCase().replace(/\s+/g, '-') || 'candidate');
+        const id = generateUniqueCandidateId(baseId);
 
-        // Check if candidate already exists
+        // Check if candidate already exists (same wallet)
         const existing = queryOne('SELECT id FROM candidates WHERE address = ?', [address]);
         if (existing) {
             return res.status(400).json({
@@ -288,6 +300,13 @@ app.post('/api/candidates', (req, res) => {
         });
     } catch (error) {
         console.error('Nomination error:', error);
+        const msg = String(error?.message || error);
+        if (msg.includes('UNIQUE constraint') || msg.includes('PRIMARY KEY') || msg.includes('SQLITE_CONSTRAINT')) {
+            return res.status(409).json({
+                success: false,
+                error: 'A candidate with this identifier already exists. Please try again.'
+            });
+        }
         res.status(500).json({
             success: false,
             error: 'Internal server error'
@@ -403,9 +422,9 @@ app.get('/api/results/:candidateId', (req, res) => {
         });
     }
 
-    // Get assessments for this candidate
+    // Get assessments for this candidate (alias "values" - double quotes for SQLite identifier)
     const assessments = queryAll(`
-        SELECT technical, reliability, communication, values_score as 'values',
+        SELECT technical, reliability, communication, values_score as "values",
                feedback, created_at as timestamp
         FROM assessments WHERE candidate_id = ?
     `, [candidateId]);
@@ -446,7 +465,7 @@ app.get('/api/results', (req, res) => {
 
     const results = candidates.map(candidate => {
         const assessments = queryAll(`
-            SELECT technical, reliability, communication, values_score as 'values'
+            SELECT technical, reliability, communication, values_score as "values"
             FROM assessments WHERE candidate_id = ?
         `, [candidate.id]);
 
@@ -532,6 +551,12 @@ app.post('/api/payment-vote', (req, res) => {
         }
 
         const [c1, c2, c3] = compensationChoices.map(Number);
+        if ([c1, c2, c3].some(n => !Number.isFinite(n))) {
+            return res.status(400).json({
+                success: false,
+                error: 'Choices must be valid numbers between $200 and $3,000 USDC'
+            });
+        }
         if (c1 < 200 || c1 > 3000 || c2 < 200 || c2 > 3000 || c3 < 200 || c3 > 3000) {
             return res.status(400).json({
                 success: false,
