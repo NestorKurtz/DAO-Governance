@@ -1,0 +1,57 @@
+# AavegotchiDAO Multisig-Signer-Election – Signal Proposal
+
+**Author**: Nestor /
+**Discussion Thread**: 1468690009849598078 
+**Date**: February 09, 2006
+
+Frens, the discussion on the Nomination & Election of the Multi-Sig-Signers is entering the next stage:
+- we were presented with ideas for advancing on our path to full-onchain Governance 
+- we were made aware of the connections to the Constitution of our DAOs Foundation
+
+With 9 nominees already signaling interest, we are ready to evolve the Multisig Signers structure once again from the original AGIP 50/51 setup (fixed 9 signers, 5/9 quorum, GHST pay). 
+
+This Signal Proposal tests community sentiment on two key questions before a binding CoreProp. It is non-binding. 
+[In case quorum is reached and it passes very strongly and discussions around the mentioned topics broaden, a Special Resolution to amend any or all of the Foundation Articles (13, 15, 17, 27, 56, 78) is not off the agenda. ]
+
+**Fiduciary Reminder**  
+Directors owe duties to the Foundation (Art. 24/26). We gauge security (decentralization vs. execution speed), treasury sustainability, and fairness in incentives.  
+
+
+
+Signer-Election-Poll - Question 1: 
+What is your preferred number of Signers for the next period?
+(Single-choice - pick one)
+
+Rationale: Original fixed 9. Flexibility allows adjustment based on nominees and needs (fewer = faster execution; more = stronger decentralization/security).
+
+- Three (3), the Multi-Sig-Wallet executes with 2 out of 3 Signers
+- Five (5), the Multi-Sig-Wallet executes with 3 out of 5 Signers
+- Seven (7), the Multi-Sig-Wallet executes with 4 out of 7 Signers
+- Nine (9), the Multi-Sig-Wallet executes with 5 out of 9 Signers 
+- "Abstain / No preference" 
+
+*	*	*	*	*	*	*	*	*	*	*	*	*
+
+Signer-Election-Poll - Question 2: 
+What is your preferred quarterly USDC Compensation per Signer?
+(Weighted Voting - spread your GHST power across options)
+
+Rationale: Temporary switch to USDC until GHST stabilizes (past reference: ~2000 GHST quarterly ≈ 2000–2500 USDC). With the signer count chosen, scales show total spend. Allocate weight to express nuance with your GHST (e.g., 60% on 2000, 40% on 3000).
+
+- 500 USDC (very conservative)  
+- 1000 USDC (low but sustainable)  
+- 2000 USDC (historical reference level – balanced)  
+- 3000 USDC (attractive for commitment)  
+- 5000 USDC (high to attract signers)  
+- Abstain / No preference 
+
+**Voting Details**  
+- Duration: 5 days (quick signal)  
+- Quorum: ~20% GHST (traditional SigProp level)  
+- Strategy: GHST token-weighted  
+- If strong support, this will produce data and lead to a fast follow-up CoreProp. [conceivably a Special Resolution (2/3 majority required for binding amendment).]  
+
+Nominate (until 02-10-26, 8:30pm CET) and vote now! – the discussion is live in Discord! 
+Let's move quickly while momentum is high! 
+
+#AavegotchiDAO #GHST ##SignerElections #MultisigEvolution
